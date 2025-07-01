@@ -16,11 +16,11 @@ export const metadata: Metadata = {
     title: "Photo-Print-Generator - Your Go-To Tool for Official Document Photos",
     description:
       "Generate print-ready passport and visa photo collages based on country-specific requirements. Upload your photo, select the type, and get a high-quality collage for printing.",
-    url: "https://your-app-url.com", // IMPORTANT: Replace with your actual deployed URL
+    url: "https://your-app-url.com",
     siteName: "Photo-Print-Generator",
     images: [
       {
-        url: "/images/how-it-works.png", // Use your how-it-works image or a dedicated OG image
+        url: "/images/how-it-works.png",
         width: 600,
         height: 200,
         alt: "Photo-Print-Generator How it Works",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     title: "Photo-Print-Generator - Your Go-To Tool for Official Document Photos",
     description:
       "Generate print-ready passport and visa photo collages based on country-specific requirements. Upload your photo, select the type, and get a high-quality collage for printing.",
-    images: ["/images/how-it-works.png"], // Use your how-it-works image or a dedicated OG image
+    images: ["/images/how-it-works.png"],
   },
   robots: {
     index: true,
@@ -46,10 +46,8 @@ export const metadata: Metadata = {
       "max-image-preview": "large",
       "max-snippet": -1,
     },
-  },,
-  // Add canonical URL if applicable
-  // canonical: "https://your-app-url.com",
-    generator: 'v0.dev'
+  },
+  generator: "v0.dev",
 }
 
 export default function RootLayout({
