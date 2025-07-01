@@ -2,12 +2,25 @@ import { NextResponse } from "next/server"
 import Stripe from "stripe"
 import { countryRequirements, BASE_PRICE_USD, BASE_PRICE_GBP } from "@/lib/constants"
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-04-10", // Use a recent API version
-})
+// Check if Stripe secret key exists
+if (!process.env.STRIPE_SECRET_KEY) {
+  console.error("STRIPE_SECRET_KEY is not set in environment variables")
+}
+
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2024-04-10",
+    })
+  : null
 
 export async function POST(req: Request) {
   try {
+    // Check if Stripe is configured
+    if (!stripe) {
+      console.error("Stripe is not configured - missing STRIPE_SECRET_KEY")
+      return new NextResponse("Payment system not configured", { status: 500 })
+    }
+
     const { countryId, totalPhotos } = await req.json()
 
     const countryReq = countryRequirements.find((req) => req.id === countryId)
@@ -19,8 +32,11 @@ export async function POST(req: Request) {
     const basePrice = countryReq.currency === "GBP" ? BASE_PRICE_GBP : BASE_PRICE_USD
     const amount = Math.round(basePrice * 100) // Stripe expects amount in cents/pence
 
+    // Get base URL with fallback
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://your-app.vercel.app"
+
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card", "paypal"], // Removed trailing comma here
+      payment_method_types: ["card", "paypal"],
       line_items: [
         {
           price_data: {
@@ -35,8 +51,8 @@ export async function POST(req: Request) {
         },
       ],
       mode: "payment",
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/cancel`,
+      success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/cancel`,
       metadata: {
         countryId,
         totalPhotos: totalPhotos.toString(),

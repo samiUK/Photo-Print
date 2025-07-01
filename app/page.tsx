@@ -9,17 +9,9 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { Loader2 } from "lucide-react"
-import { useRouter } from "next/navigation" // Import useRouter
-import {
-  countryRequirements,
-  paperSizes,
-  DPI,
-  mmToPixels,
-  PHOTO_PADDING_MM,
-  BASE_PRICE_USD,
-  BASE_PRICE_GBP,
-} from "@/lib/constants"
+import { Loader2, Download } from "lucide-react"
+import { jsPDF } from "jspdf"
+import { countryRequirements, paperSizes, DPI, mmToPixels, PHOTO_PADDING_MM } from "@/lib/constants"
 
 // Client-side image processing function using Canvas API
 async function processAndCollageImage(
@@ -218,11 +210,8 @@ export default function Home() {
   const [selectedCountryId, setSelectedCountryId] = useState<string | null>(null)
   const [downloadFormat, setDownloadFormat] = useState<"jpeg" | "png" | "pdf">("jpeg")
   const formRef = useRef<HTMLFormElement>(null)
-  const router = useRouter() // Initialize useRouter
 
   const currentCountry = selectedCountryId ? countryRequirements.find((req) => req.id === selectedCountryId) : null
-  const currentPrice = currentCountry?.currency === "GBP" ? BASE_PRICE_GBP : BASE_PRICE_USD
-  const currencySymbol = currentCountry?.currency === "GBP" ? "£" : "$"
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -261,46 +250,32 @@ export default function Home() {
     setIsLoading(false)
   }
 
-  const handleInitiatePayment = async () => {
-    if (!result?.success || !result.nonWatermarkedImage || !selectedCountryId || !result.totalPhotos) {
-      setResult({ success: false, error: "Please generate a collage first." })
+  const handleDirectDownload = async () => {
+    if (!result?.success || !result.nonWatermarkedImage) {
       return
     }
 
-    setIsLoading(true)
-    try {
-      // Store the non-watermarked image in sessionStorage before redirecting
-      // This allows the success page to retrieve it for download
-      sessionStorage.setItem("nonWatermarkedCollage", result.nonWatermarkedImage)
-      sessionStorage.setItem("downloadFormat", downloadFormat)
-      sessionStorage.setItem(
-        "paperSizeId",
-        (formRef.current?.elements.namedItem("paperSize") as HTMLSelectElement)?.value || "6x4",
+    const link = document.createElement("a")
+    if (downloadFormat === "pdf") {
+      const selectedPaperSize = paperSizes.find(
+        (s) => s.id === (formRef.current?.elements.namedItem("paperSize") as HTMLSelectElement)?.value,
       )
-
-      const response = await fetch("/api/stripe/checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          countryId: selectedCountryId,
-          totalPhotos: result.totalPhotos,
-        }),
+      const doc = new jsPDF({
+        orientation:
+          (selectedPaperSize?.widthInches || 6) > (selectedPaperSize?.heightInches || 4) ? "landscape" : "portrait",
+        unit: "in",
+        format: [selectedPaperSize?.widthInches || 6, selectedPaperSize?.heightInches || 4],
       })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        router.push(data.url) // Redirect to Stripe Checkout
-      } else {
-        setResult({ success: false, error: data.error || "Failed to initiate payment." })
-      }
-    } catch (error: any) {
-      console.error("Error initiating payment:", error)
-      setResult({ success: false, error: error.message || "Failed to initiate payment." })
-    } finally {
-      setIsLoading(false)
+      const imgWidth = doc.internal.pageSize.getWidth()
+      const imgHeight = doc.internal.pageSize.getHeight()
+      doc.addImage(result.nonWatermarkedImage, "JPEG", 0, 0, imgWidth, imgHeight)
+      doc.save("passport-photo-collage.pdf")
+    } else {
+      link.href = result.nonWatermarkedImage
+      link.download = `passport-photo-collage.${downloadFormat}`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
     }
   }
 
@@ -412,7 +387,7 @@ export default function Home() {
 
               <Button
                 type="submit"
-                className="w-full bg-green-600 hover:bg-green-700 text-white" // Changed to green
+                className="w-full bg-green-600 hover:bg-green-700 text-white"
                 disabled={isLoading || !selectedImage || !selectedCountryId}
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -468,9 +443,8 @@ export default function Home() {
           <CardFooter className="flex flex-col gap-4 bg-white">
             {result?.success && result.nonWatermarkedImage && (
               <>
-                <div className="w-full text-center text-lg font-bold text-gray-900">
-                  Price: {currencySymbol}
-                  {currentPrice.toFixed(2)}
+                <div className="w-full text-center text-lg font-bold text-green-600">
+                  🎉 FREE DOWNLOAD - No Payment Required! 🎉
                 </div>
                 <div className="grid w-full items-center gap-1.5">
                   <Label htmlFor="download-format" className="text-gray-900">
@@ -510,14 +484,15 @@ export default function Home() {
                   </Select>
                 </div>
                 <Button
-                  onClick={handleInitiatePayment} // Changed to initiate payment
+                  onClick={handleDirectDownload}
                   className="w-full bg-green-600 hover:bg-green-700 text-white"
                   disabled={isLoading}
                 >
-                  {isLoading ? "Redirecting to Payment..." : "Make payment and download HD image"}
+                  <Download className="mr-2 h-4 w-4" />
+                  Download HD Collage ({downloadFormat.toUpperCase()})
                 </Button>
-                <p className="text-sm text-gray-800 text-center">
-                  (You will be redirected to Stripe to complete your purchase.)
+                <p className="text-sm text-gray-600 text-center">
+                  Your high-quality collage is ready for download! Print it at your local photo shop.
                 </p>
               </>
             )}
