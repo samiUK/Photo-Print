@@ -317,17 +317,19 @@ export default function Home() {
   const selectedPaperSize = paperSizes.find((s) => s.id === selectedPaperSizeId)
 
   return (
-    <div className="flex min-h-screen flex-col items-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
-      <header className="w-full max-w-2xl py-6 text-center">
-        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl text-gray-900">Photo-Print-Generator</h1>
-        <p className="mt-2 text-lg text-gray-800">Your go-to tool for official document photos.</p>
+    <div className="flex min-h-screen flex-col items-center bg-gradient-to-br from-blue-400 via-purple-500 to-indigo-600 p-4">
+      <header className="w-full max-w-2xl py-8 text-center">
+        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl text-white drop-shadow-lg">
+          Official Photo Collage Generator for Prints
+        </h1>
+        <p className="mt-3 text-lg text-blue-100 font-medium">Your go-to tool for official document photos.</p>
       </header>
 
       <main className="w-full max-w-2xl">
-        <Card className="w-full">
+        <Card className="w-full shadow-2xl border-0 rounded-2xl overflow-hidden">
           <CardHeader className="bg-white">
             <CardTitle className="text-3xl font-bold text-gray-900">Passport Photo Collage Generator</CardTitle>
-            <CardDescription className="text-gray-800">
+            <CardDescription className="text-gray-700 text-base">
               Upload your photo, select country requirements, and get a print-ready collage.
             </CardDescription>
           </CardHeader>
@@ -522,11 +524,11 @@ export default function Home() {
 
       {/* Privacy Notice Footer */}
       <footer className="w-full max-w-2xl mt-8 mb-4">
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+        <div className="bg-white/90 backdrop-blur-sm border border-white/20 rounded-xl p-4 shadow-lg">
           <div className="flex items-start gap-3">
-            <Shield className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-            <div className="text-sm text-green-800">
-              <p className="font-medium mb-1">Privacy & Security</p>
+            <Shield className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+            <div className="text-sm text-gray-700">
+              <p className="font-semibold mb-1 text-gray-800">Privacy & Security</p>
               <p>
                 The photo generation takes place directly on your browser and we don't capture any data or images from
                 you. So you can use the platform with peace of mind and print more copies of photos to save money.
