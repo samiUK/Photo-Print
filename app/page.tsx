@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { Loader2, CreditCard } from "lucide-react"
+import { Loader2, CreditCard, Shield } from "lucide-react"
 import {
   countryRequirements,
   paperSizes,
@@ -519,6 +519,22 @@ export default function Home() {
           </CardFooter>
         </Card>
       </main>
+
+      {/* Privacy Notice Footer */}
+      <footer className="w-full max-w-2xl mt-8 mb-4">
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <Shield className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+            <div className="text-sm text-green-800">
+              <p className="font-medium mb-1">Privacy & Security</p>
+              <p>
+                The photo generation takes place directly on your browser and we don't capture any data or images from
+                you. So you can use the platform with peace of mind and print more copies of photos to save money.
+              </p>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
