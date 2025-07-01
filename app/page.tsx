@@ -319,10 +319,111 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col items-center bg-gradient-to-br from-blue-400 via-purple-500 to-indigo-600 p-4">
       <header className="w-full max-w-2xl py-8 text-center">
-        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl text-white drop-shadow-lg">
+        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl text-white drop-shadow-lg mb-6">
           Official Photo Collage Generator for Prints
         </h1>
-        
+
+        <div className="flex flex-wrap justify-center gap-3 mt-4">
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/30 shadow-lg">
+            <Image
+              src="https://flagcdn.com/w40/us.png"
+              alt="USA Flag"
+              width={48}
+              height={48}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/30 shadow-lg">
+            <Image
+              src="https://flagcdn.com/w40/gb.png"
+              alt="UK Flag"
+              width={48}
+              height={48}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/30 shadow-lg">
+            <Image
+              src="https://flagcdn.com/w40/ca.png"
+              alt="Canada Flag"
+              width={48}
+              height={48}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/30 shadow-lg">
+            <Image
+              src="https://flagcdn.com/w40/au.png"
+              alt="Australia Flag"
+              width={48}
+              height={48}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/30 shadow-lg">
+            <Image
+              src="https://flagcdn.com/w40/de.png"
+              alt="Germany Flag"
+              width={48}
+              height={48}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/30 shadow-lg">
+            <Image
+              src="https://flagcdn.com/w40/jp.png"
+              alt="Japan Flag"
+              width={48}
+              height={48}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/30 shadow-lg">
+            <Image
+              src="https://flagcdn.com/w40/cn.png"
+              alt="China Flag"
+              width={48}
+              height={48}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/30 shadow-lg">
+            <Image
+              src="https://flagcdn.com/w40/fr.png"
+              alt="France Flag"
+              width={48}
+              height={48}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/30 shadow-lg">
+            <Image
+              src="https://flagcdn.com/w40/br.png"
+              alt="Brazil Flag"
+              width={48}
+              height={48}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/30 shadow-lg">
+            <Image
+              src="https://flagcdn.com/w40/in.png"
+              alt="India Flag"
+              width={48}
+              height={48}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/30 shadow-lg">
+            <Image
+              src="https://flagcdn.com/w40/eu.png"
+              alt="Schengen Flag"
+              width={48}
+              height={48}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
       </header>
 
       <main className="w-full max-w-2xl">
