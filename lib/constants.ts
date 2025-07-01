@@ -2,7 +2,7 @@
 export const DPI = 300 // Dots per inch for print quality
 export const PHOTO_PADDING_MM = 1 // Reduced padding around each photo in millimeters
 
-export const BASE_PRICE_USD = 0.6 // Updated base price for USD
+export const BASE_PRICE_USD = 0.7 // Updated base price for USD
 export const BASE_PRICE_GBP = 0.5 // Base price for collage in GBP (for UK)
 
 export interface CountryRequirement {
