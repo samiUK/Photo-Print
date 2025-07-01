@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+
 import { useState, useRef } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
@@ -8,223 +9,227 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { Loader2, Download } from "lucide-react"
-import { jsPDF } from "jspdf"
-import { countryRequirements, paperSizes, DPI, mmToPixels, PHOTO_PADDING_MM } from "@/lib/constants"
+import { Loader2, CreditCard } from "lucide-react"
+import {
+  countryRequirements,
+  paperSizes,
+  DPI,
+  mmToPixels,
+  PHOTO_PADDING_MM,
+  BASE_PRICE_USD,
+  BASE_PRICE_GBP,
+} from "@/lib/constants"
 
-// Client-side image processing function using Canvas API
-async function processAndCollageImage(
-  imageDataUrl: string,
-  countryId: string,
-  paperSizeId: string,
-): Promise<{
-  success: boolean
-  watermarkedImage?: string
-  nonWatermarkedImage?: string
-  error?: string
-  totalPhotos?: number
-}> {
-  const countryReq = countryRequirements.find((req) => req.id === countryId)
-  const paperSize = paperSizes.find((size) => size.id === paperSizeId)
-
-  if (!countryReq || !paperSize) {
-    return { success: false, error: "Invalid country or paper size selected." }
-  }
-
-  try {
-    // Load the uploaded image
-    const originalImage = new Image()
-    originalImage.crossOrigin = "anonymous"
-    originalImage.src = imageDataUrl
-    await new Promise<void>((resolve, reject) => {
-      originalImage.onload = () => resolve()
-      originalImage.onerror = () => reject(new Error("Failed to load image"))
-    })
-
-    // Calculate dimensions for the single processed photo
-    const photoWidthPx = Math.round(mmToPixels(countryReq.photoWidthMm, DPI))
-    const photoHeightPx = Math.round(mmToPixels(countryReq.photoHeightMm, DPI))
-    const photoPaddingPx = Math.round(mmToPixels(PHOTO_PADDING_MM, DPI))
-
-    // Create a temporary canvas for processing the single photo
-    const tempCanvas = document.createElement("canvas")
-    tempCanvas.width = photoWidthPx
-    tempCanvas.height = photoHeightPx
-    const tempCtx = tempCanvas.getContext("2d")
-    if (!tempCtx) {
-      throw new Error("Failed to get canvas context")
-    }
-
-    // Apply background color based on country requirement
-    const backgroundColor =
-      countryReq.background === "white"
-        ? "#FFFFFF"
-        : countryReq.background === "off-white"
-          ? "#F5F5DC"
-          : countryReq.background === "blue"
-            ? "#ADD8E6"
-            : countryReq.background === "red"
-              ? "#FFCCCB"
-              : countryReq.background === "light-grey"
-                ? "#D3D3D3"
-                : countryReq.background === "light-blue"
-                  ? "#ADD8E6"
-                  : "#FFFFFF"
-
-    tempCtx.fillStyle = backgroundColor
-    tempCtx.fillRect(0, 0, photoWidthPx, photoHeightPx)
-
-    // Calculate crop parameters to fit and center the image
-    const originalAspectRatio = originalImage.width / originalImage.height
-    const targetAspectRatio = photoWidthPx / photoHeightPx
-
-    let sx = 0,
-      sy = 0,
-      sWidth = originalImage.width,
-      sHeight = originalImage.height
-
-    if (originalAspectRatio > targetAspectRatio) {
-      sWidth = originalImage.height * targetAspectRatio
-      sx = (originalImage.width - sWidth) / 2
-    } else {
-      sHeight = originalImage.width / targetAspectRatio
-      sy = (originalImage.height - sHeight) / 2
-    }
-
-    // Draw the cropped and resized image onto the temporary canvas
-    tempCtx.drawImage(originalImage, sx, sy, sWidth, sHeight, 0, 0, photoWidthPx, photoHeightPx)
-
-    const processedPhotoDataUrl = tempCanvas.toDataURL("image/jpeg", 0.9)
-
-    // Generate collage layout
-    const paperWidthPx = Math.round(paperSize.widthInches * DPI)
-    const paperHeightPx = Math.round(paperSize.heightInches * DPI)
-
-    // Calculate how many photos fit, considering padding
-    const effectivePhotoWidth = photoWidthPx + photoPaddingPx * 2
-    const effectivePhotoHeight = photoHeightPx + photoPaddingPx * 2
-
-    const photosPerRow = Math.floor(paperWidthPx / effectivePhotoWidth)
-    const photosPerColumn = Math.floor(paperHeightPx / effectivePhotoHeight)
-    const totalPhotos = photosPerRow * photosPerColumn
-
-    if (totalPhotos === 0) {
-      return { success: false, error: "Photo size too large for selected paper, even with minimal padding." }
-    }
-
-    const collageCanvas = document.createElement("canvas")
-    collageCanvas.width = paperWidthPx
-    collageCanvas.height = paperHeightPx
-    const collageCtx = collageCanvas.getContext("2d")
-    if (!collageCtx) {
-      throw new Error("Failed to get collage canvas context")
-    }
-
-    // Fill collage background white
-    collageCtx.fillStyle = "#FFFFFF"
-    collageCtx.fillRect(0, 0, paperWidthPx, paperHeightPx)
-
-    // Load the processed single photo for collage
-    const singlePhotoForCollage = new Image()
-    singlePhotoForCollage.crossOrigin = "anonymous"
-    singlePhotoForCollage.src = processedPhotoDataUrl
-    await new Promise<void>((resolve, reject) => {
-      singlePhotoForCollage.onload = () => resolve()
-      singlePhotoForCollage.onerror = () => reject(new Error("Failed to load processed photo"))
-    })
-
-    // Calculate total grid dimensions including padding
-    const totalGridWidth = photosPerRow * effectivePhotoWidth
-    const totalGridHeight = photosPerColumn * effectivePhotoHeight
-
-    // Calculate offset to center the grid
-    const offsetX = (paperWidthPx - totalGridWidth) / 2
-    const offsetY = (paperHeightPx - totalGridHeight) / 2
-
-    // Draw photos onto the collage canvas with padding and centering
-    for (let i = 0; i < totalPhotos; i++) {
-      const row = Math.floor(i / photosPerRow)
-      const col = i % photosPerRow
-      const x = offsetX + col * effectivePhotoWidth + photoPaddingPx
-      const y = offsetY + row * effectivePhotoHeight + photoPaddingPx
-      collageCtx.drawImage(singlePhotoForCollage, x, y, photoWidthPx, photoHeightPx)
-    }
-
-    const nonWatermarkedImage = collageCanvas.toDataURL("image/jpeg", 1.0)
-
-    // Create a separate canvas for the watermarked preview
-    const watermarkedCanvas = document.createElement("canvas")
-    watermarkedCanvas.width = paperWidthPx
-    watermarkedCanvas.height = paperHeightPx
-    const watermarkedCtx = watermarkedCanvas.getContext("2d")
-    if (!watermarkedCtx) {
-      throw new Error("Failed to get watermarked canvas context")
-    }
-
-    // Draw the non-watermarked image onto the watermarked canvas
-    const tempCollageImage = new Image()
-    tempCollageImage.crossOrigin = "anonymous"
-    tempCollageImage.src = nonWatermarkedImage
-    await new Promise<void>((resolve, reject) => {
-      tempCollageImage.onload = () => resolve()
-      tempCollageImage.onerror = () => reject(new Error("Failed to load collage image"))
-    })
-    watermarkedCtx.drawImage(tempCollageImage, 0, 0, paperWidthPx, paperHeightPx)
-
-    // Add "Specimen" watermarks in a grid pattern
-    watermarkedCtx.font = "bold 80px Arial"
-    watermarkedCtx.fillStyle = "rgba(0, 0, 0, 0.25)"
-    watermarkedCtx.textAlign = "center"
-    watermarkedCtx.textBaseline = "middle"
-
-    const watermarkText = "SPECIMEN"
-    const rotationAngle = -Math.PI / 6
-
-    // Calculate grid for watermarks
-    const stepX = paperWidthPx / 2
-    const stepY = paperHeightPx / 2
-
-    for (let y = -stepY; y < paperHeightPx + stepY; y += stepY) {
-      for (let x = -stepX; x < paperWidthPx + stepX; x += stepX) {
-        watermarkedCtx.save()
-        watermarkedCtx.translate(x, y)
-        watermarkedCtx.rotate(rotationAngle)
-        watermarkedCtx.fillText(watermarkText, 0, 0)
-        watermarkedCtx.restore()
+// Simple image processing without complex async operations
+function processImageSync(imageDataUrl: string, countryId: string, paperSizeId: string) {
+  return new Promise((resolve) => {
+    // Find country requirement
+    let countryReq = null
+    for (let i = 0; i < countryRequirements.length; i++) {
+      if (countryRequirements[i].id === countryId) {
+        countryReq = countryRequirements[i]
+        break
       }
     }
 
-    const watermarkedImage = watermarkedCanvas.toDataURL("image/jpeg", 0.8)
+    // Find paper size
+    let paperSize = null
+    for (let j = 0; j < paperSizes.length; j++) {
+      if (paperSizes[j].id === paperSizeId) {
+        paperSize = paperSizes[j]
+        break
+      }
+    }
 
-    return { success: true, watermarkedImage, nonWatermarkedImage, totalPhotos }
-  } catch (error) {
-    console.error("Image processing error:", error)
-    const errorMessage = error instanceof Error ? error.message : "Failed to process image."
-    return { success: false, error: errorMessage }
-  }
+    if (!countryReq || !paperSize) {
+      resolve({ success: false, error: "Invalid selection" })
+      return
+    }
+
+    // Create image element
+    const img = document.createElement("img")
+    img.onload = () => {
+      try {
+        // Calculate dimensions
+        const photoWidthPx = Math.round(mmToPixels(countryReq.photoWidthMm, DPI))
+        const photoHeightPx = Math.round(mmToPixels(countryReq.photoHeightMm, DPI))
+        const photoPaddingPx = Math.round(mmToPixels(PHOTO_PADDING_MM, DPI))
+
+        // Create canvas
+        const canvas = document.createElement("canvas")
+        canvas.width = photoWidthPx
+        canvas.height = photoHeightPx
+        const ctx = canvas.getContext("2d")
+
+        if (!ctx) {
+          resolve({ success: false, error: "Canvas not supported" })
+          return
+        }
+
+        // Set background
+        ctx.fillStyle = "#FFFFFF"
+        ctx.fillRect(0, 0, photoWidthPx, photoHeightPx)
+
+        // Calculate crop dimensions to center crop the image
+        const targetAspectRatio = photoWidthPx / photoHeightPx
+        const sourceAspectRatio = img.width / img.height
+
+        let sourceX = 0
+        let sourceY = 0
+        let sourceWidth = img.width
+        let sourceHeight = img.height
+
+        if (sourceAspectRatio > targetAspectRatio) {
+          // Source is wider than target, crop horizontally
+          sourceWidth = img.height * targetAspectRatio
+          sourceX = (img.width - sourceWidth) / 2
+        } else {
+          // Source is taller than target, crop vertically
+          sourceHeight = img.width / targetAspectRatio
+          sourceY = (img.height - sourceHeight) / 2
+        }
+
+        // Draw the center-cropped image
+        ctx.drawImage(img, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, photoWidthPx, photoHeightPx)
+
+        // Create collage
+        const paperWidthPx = Math.round(paperSize.widthInches * DPI)
+        const paperHeightPx = Math.round(paperSize.heightInches * DPI)
+
+        const effectivePhotoWidth = photoWidthPx + photoPaddingPx * 2
+        const effectivePhotoHeight = photoHeightPx + photoPaddingPx * 2
+
+        const photosPerRow = Math.floor(paperWidthPx / effectivePhotoWidth)
+        const photosPerColumn = Math.floor(paperHeightPx / effectivePhotoHeight)
+        const totalPhotos = photosPerRow * photosPerColumn
+
+        if (totalPhotos === 0) {
+          resolve({ success: false, error: "Photo too large for paper" })
+          return
+        }
+
+        // Create collage canvas
+        const collageCanvas = document.createElement("canvas")
+        collageCanvas.width = paperWidthPx
+        collageCanvas.height = paperHeightPx
+        const collageCtx = collageCanvas.getContext("2d")
+
+        if (!collageCtx) {
+          resolve({ success: false, error: "Collage canvas not supported" })
+          return
+        }
+
+        // Fill white background
+        collageCtx.fillStyle = "#FFFFFF"
+        collageCtx.fillRect(0, 0, paperWidthPx, paperHeightPx)
+
+        // Get single photo data
+        const singlePhotoData = canvas.toDataURL("image/jpeg", 0.9)
+
+        // Create image for collage
+        const photoImg = document.createElement("img")
+        photoImg.onload = () => {
+          // Calculate centering
+          const totalGridWidth = photosPerRow * effectivePhotoWidth
+          const totalGridHeight = photosPerColumn * effectivePhotoHeight
+          const offsetX = (paperWidthPx - totalGridWidth) / 2
+          const offsetY = (paperHeightPx - totalGridHeight) / 2
+
+          // Draw photos
+          for (let photoIndex = 0; photoIndex < totalPhotos; photoIndex++) {
+            const row = Math.floor(photoIndex / photosPerRow)
+            const col = photoIndex % photosPerRow
+            const x = offsetX + col * effectivePhotoWidth + photoPaddingPx
+            const y = offsetY + row * effectivePhotoHeight + photoPaddingPx
+            collageCtx.drawImage(photoImg, x, y, photoWidthPx, photoHeightPx)
+          }
+
+          const nonWatermarkedImage = collageCanvas.toDataURL("image/jpeg", 1.0)
+
+          // Create watermarked version
+          const watermarkedCanvas = document.createElement("canvas")
+          watermarkedCanvas.width = paperWidthPx
+          watermarkedCanvas.height = paperHeightPx
+          const watermarkedCtx = watermarkedCanvas.getContext("2d")
+
+          if (!watermarkedCtx) {
+            resolve({ success: false, error: "Watermark canvas not supported" })
+            return
+          }
+
+          // Copy collage
+          watermarkedCtx.drawImage(collageCanvas, 0, 0)
+
+          // Add watermarks
+          watermarkedCtx.font = "bold 80px Arial"
+          watermarkedCtx.fillStyle = "rgba(0, 0, 0, 0.25)"
+          watermarkedCtx.textAlign = "center"
+          watermarkedCtx.textBaseline = "middle"
+
+          const watermarkText = "SPECIMEN"
+          const stepX = paperWidthPx / 2
+          const stepY = paperHeightPx / 2
+
+          for (let yCoord = 0; yCoord < paperHeightPx; yCoord += stepY) {
+            for (let xCoord = 0; xCoord < paperWidthPx; xCoord += stepX) {
+              watermarkedCtx.save()
+              watermarkedCtx.translate(xCoord, yCoord)
+              watermarkedCtx.rotate(-Math.PI / 6)
+              watermarkedCtx.fillText(watermarkText, 0, 0)
+              watermarkedCtx.restore()
+            }
+          }
+
+          const watermarkedImage = watermarkedCanvas.toDataURL("image/jpeg", 0.8)
+
+          resolve({
+            success: true,
+            watermarkedImage: watermarkedImage,
+            nonWatermarkedImage: nonWatermarkedImage,
+            totalPhotos: totalPhotos,
+          })
+        }
+
+        photoImg.onerror = () => {
+          resolve({ success: false, error: "Failed to load processed photo" })
+        }
+
+        photoImg.src = singlePhotoData
+      } catch (error) {
+        resolve({ success: false, error: "Processing failed: " + String(error) })
+      }
+    }
+
+    img.onerror = () => {
+      resolve({ success: false, error: "Failed to load image" })
+    }
+
+    img.src = imageDataUrl
+  })
 }
 
 export default function Home() {
-  const [result, setResult] = useState<{
-    success: boolean
-    watermarkedImage?: string
-    nonWatermarkedImage?: string
-    error?: string
-    totalPhotos?: number
-  } | null>(null)
+  const [result, setResult] = useState<any>(null)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [selectedCountryId, setSelectedCountryId] = useState<string | null>(null)
-  const [downloadFormat, setDownloadFormat] = useState<"jpeg" | "png" | "pdf">("jpeg")
+  const [selectedPaperSizeId, setSelectedPaperSizeId] = useState("6x4")
+  const [downloadFormat, setDownloadFormat] = useState("jpeg")
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
       const reader = new FileReader()
-      reader.onloadend = () => {
-        setSelectedImage(reader.result as string)
-        setResult(null)
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          setSelectedImage(e.target.result as string)
+          setResult(null)
+        }
+      }
+      reader.onerror = () => {
+        setResult({ success: false, error: "Failed to read file" })
       }
       reader.readAsDataURL(file)
     } else {
@@ -235,6 +240,7 @@ export default function Home() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+
     if (!selectedImage) {
       setResult({ success: false, error: "Please upload an image." })
       return
@@ -250,50 +256,65 @@ export default function Home() {
     }
 
     setIsLoading(true)
+    setResult(null)
+
     try {
-      const processingResult = await processAndCollageImage(selectedImage, countryId, paperSizeId)
+      const processingResult = await processImageSync(selectedImage, countryId, paperSizeId)
       setResult(processingResult)
     } catch (error) {
-      console.error("Processing error:", error)
-      setResult({ success: false, error: "An unexpected error occurred during processing." })
+      setResult({ success: false, error: "Processing failed" })
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleDirectDownload = async () => {
-    if (!result?.success || !result.nonWatermarkedImage) {
+  const handlePayment = async () => {
+    if (!result?.success || !result.nonWatermarkedImage || !selectedCountryId) {
       return
     }
 
+    setIsProcessingPayment(true)
+
     try {
-      const link = document.createElement("a")
-      if (downloadFormat === "pdf") {
-        const selectedPaperSize = paperSizes.find(
-          (s) => s.id === (formRef.current?.elements.namedItem("paperSize") as HTMLSelectElement)?.value,
-        )
-        const doc = new jsPDF({
-          orientation:
-            (selectedPaperSize?.widthInches || 6) > (selectedPaperSize?.heightInches || 4) ? "landscape" : "portrait",
-          unit: "in",
-          format: [selectedPaperSize?.widthInches || 6, selectedPaperSize?.heightInches || 4],
-        })
-        const imgWidth = doc.internal.pageSize.getWidth()
-        const imgHeight = doc.internal.pageSize.getHeight()
-        doc.addImage(result.nonWatermarkedImage, "JPEG", 0, 0, imgWidth, imgHeight)
-        doc.save("passport-photo-collage.pdf")
+      sessionStorage.setItem("nonWatermarkedCollage", result.nonWatermarkedImage)
+      sessionStorage.setItem("downloadFormat", downloadFormat)
+      sessionStorage.setItem("paperSizeId", selectedPaperSizeId)
+
+      const response = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          countryId: selectedCountryId,
+          totalPhotos: result.totalPhotos,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to create checkout session")
+      }
+
+      const responseData = await response.json()
+      if (responseData.url) {
+        window.location.href = responseData.url
       } else {
-        link.href = result.nonWatermarkedImage
-        link.download = `passport-photo-collage.${downloadFormat}`
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
+        throw new Error("No checkout URL received")
       }
     } catch (error) {
-      console.error("Download error:", error)
-      setResult({ ...result, error: "Failed to download file." })
+      setResult({ ...result, error: "Payment failed. Please try again." })
+    } finally {
+      setIsProcessingPayment(false)
     }
   }
+
+  // Get selected country for pricing
+  const selectedCountry = countryRequirements.find((c) => c.id === selectedCountryId)
+  const price = selectedCountry?.currency === "GBP" ? BASE_PRICE_GBP : BASE_PRICE_USD
+  const currency = selectedCountry?.currency || "USD"
+
+  // Find paper size for display
+  const selectedPaperSize = paperSizes.find((s) => s.id === selectedPaperSizeId)
 
   return (
     <div className="flex min-h-screen flex-col items-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
@@ -383,7 +404,15 @@ export default function Home() {
                 <Label htmlFor="paperSize" className="text-gray-900">
                   Paper Size for Collage
                 </Label>
-                <Select name="paperSize" defaultValue="6x4" required>
+                <Select
+                  name="paperSize"
+                  defaultValue="6x4"
+                  required
+                  onValueChange={(value) => {
+                    setSelectedPaperSizeId(value)
+                    setResult(null)
+                  }}
+                >
                   <SelectTrigger id="paperSize" className="bg-white text-gray-900">
                     <SelectValue placeholder="Select paper size" />
                   </SelectTrigger>
@@ -420,36 +449,14 @@ export default function Home() {
                   <Image
                     src={result.watermarkedImage || "/placeholder.svg"}
                     alt="Generated Photo Collage Preview (Specimen)"
-                    width={
-                      paperSizes.find(
-                        (s) => s.id === (formRef.current?.elements.namedItem("paperSize") as HTMLSelectElement)?.value,
-                      )?.widthInches * 100 || 600
-                    }
-                    height={
-                      paperSizes.find(
-                        (s) => s.id === (formRef.current?.elements.namedItem("paperSize") as HTMLSelectElement)?.value,
-                      )?.heightInches * 100 || 400
-                    }
+                    width={selectedPaperSize ? selectedPaperSize.widthInches * 100 : 600}
+                    height={selectedPaperSize ? selectedPaperSize.heightInches * 100 : 400}
                     className="max-w-full h-auto border rounded-md shadow-lg"
                     priority
                   />
                 </div>
                 <div className="text-center text-sm text-gray-800">
-                  Collage generated with{" "}
-                  {
-                    countryRequirements.find(
-                      (req) =>
-                        req.id ===
-                        (formRef.current?.elements.namedItem("passport-visa-type") as HTMLSelectElement)?.value,
-                    )?.name
-                  }{" "}
-                  photos on{" "}
-                  {
-                    paperSizes.find(
-                      (s) => s.id === (formRef.current?.elements.namedItem("paperSize") as HTMLSelectElement)?.value,
-                    )?.name
-                  }{" "}
-                  paper.
+                  Collage generated with {selectedCountry?.name || ""} photos on {selectedPaperSize?.name || ""} paper.
                   <br />
                   **Total Photos on Sheet: {result.totalPhotos}**
                 </div>
@@ -459,57 +466,54 @@ export default function Home() {
           <CardFooter className="flex flex-col gap-4 bg-white">
             {result?.success && result.nonWatermarkedImage && (
               <>
-                <div className="w-full text-center text-lg font-bold text-green-600">
-                  🎉 FREE DOWNLOAD - No Payment Required! 🎉
+                <div className="w-full text-center">
+                  <div className="text-2xl font-bold text-gray-900 mb-2">Get High-Quality Download</div>
+                  <div className="text-lg text-gray-700 mb-4">
+                    Only {currency === "GBP" ? "£" : "$"}
+                    {price.toFixed(2)} {currency} for print-ready quality
+                  </div>
                 </div>
+
                 <div className="grid w-full items-center gap-1.5">
                   <Label htmlFor="download-format" className="text-gray-900">
                     Download Format
                   </Label>
-                  <Select
-                    name="download-format"
-                    defaultValue="jpeg"
-                    onValueChange={(value) => setDownloadFormat(value as "jpeg" | "png" | "pdf")}
-                  >
+                  <Select name="download-format" defaultValue="jpeg" onValueChange={setDownloadFormat}>
                     <SelectTrigger id="download-format" className="bg-white text-gray-900">
                       <SelectValue placeholder="Select format" />
                     </SelectTrigger>
                     <SelectContent className="bg-white text-gray-900">
-                      <SelectItem
-                        key="jpeg"
-                        value="jpeg"
-                        className="bg-white text-gray-900 focus:bg-gray-100 focus:text-gray-900"
-                      >
+                      <SelectItem value="jpeg" className="bg-white text-gray-900 focus:bg-gray-100 focus:text-gray-900">
                         JPEG (High Quality)
                       </SelectItem>
-                      <SelectItem
-                        key="png"
-                        value="png"
-                        className="bg-white text-gray-900 focus:bg-gray-100 focus:text-gray-900"
-                      >
+                      <SelectItem value="png" className="bg-white text-gray-900 focus:bg-gray-100 focus:text-gray-900">
                         PNG (Lossless)
                       </SelectItem>
-                      <SelectItem
-                        key="pdf"
-                        value="pdf"
-                        className="bg-white text-gray-900 focus:bg-gray-100 focus:text-gray-900"
-                      >
+                      <SelectItem value="pdf" className="bg-white text-gray-900 focus:bg-gray-100 focus:text-gray-900">
                         PDF (Print Ready)
                       </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
+
                 <Button
-                  onClick={handleDirectDownload}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white"
-                  disabled={isLoading}
+                  onClick={handlePayment}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                  disabled={isProcessingPayment}
                 >
-                  <Download className="mr-2 h-4 w-4" />
-                  Download HD Collage ({downloadFormat.toUpperCase()})
+                  {isProcessingPayment && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  {isProcessingPayment
+                    ? "Processing..."
+                    : `Pay ${currency === "GBP" ? "£" : "$"}${price.toFixed(2)} & Download`}
                 </Button>
-                <p className="text-sm text-gray-600 text-center">
-                  Your high-quality collage is ready for download! Print it at your local photo shop.
-                </p>
+
+                <div className="text-xs text-gray-600 text-center space-y-1">
+                  <p>✓ Secure payment via Stripe</p>
+                  <p>✓ Instant download after payment</p>
+                  <p>✓ High-resolution, print-ready quality</p>
+                  <p>✓ No watermarks on final download</p>
+                </div>
               </>
             )}
           </CardFooter>
