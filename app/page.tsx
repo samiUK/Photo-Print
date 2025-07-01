@@ -440,7 +440,7 @@ export default function Home() {
               <Image
                 src="/images/how-it-works.png"
                 alt="How it works: Upload image, choose photo type and paper size, print at local store"
-                width={600}
+                width={612}
                 height={200}
                 className="max-w-full h-auto object-contain"
                 priority
