@@ -322,7 +322,7 @@ export default function Home() {
         <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl text-white drop-shadow-lg">
           Official Photo Collage Generator for Prints
         </h1>
-        <p className="mt-3 text-lg text-blue-100 font-medium">Your go-to tool for official document photos.</p>
+        
       </header>
 
       <main className="w-full max-w-2xl">
