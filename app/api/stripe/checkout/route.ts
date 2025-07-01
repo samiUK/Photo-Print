@@ -36,7 +36,7 @@ export async function POST(req: Request) {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://your-app.vercel.app"
 
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card", "paypal"],
+      payment_method_types: ["card"],
       line_items: [
         {
           price_data: {
