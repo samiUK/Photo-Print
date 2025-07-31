@@ -61,12 +61,12 @@ export default function SuccessPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-black p-4">
       <Card className="w-full max-w-md text-center">
         <CardHeader>
           <CheckCircle2 className="mx-auto h-16 w-16 text-green-500" />
-          <CardTitle className="text-3xl font-bold text-gray-900 mt-4">Payment Successful!</CardTitle>
-          <CardDescription className="text-gray-800">Your collage is ready for download.</CardDescription>
+          <CardTitle className="text-3xl font-bold text-green-500 mt-4">Payment Successful!</CardTitle>
+          <CardDescription className="text-white">Your collage is ready for download.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {nonWatermarkedImage ? (
@@ -86,11 +86,15 @@ export default function SuccessPage() {
               </Button>
             </>
           ) : (
-            <p className="text-gray-800">
+            <p className="text-white">
               No collage found. Please return to the main page and generate your collage again.
             </p>
           )}
-          <Button variant="outline" onClick={() => (window.location.href = "/")}>
+          <Button
+            variant="default"
+            onClick={() => (window.location.href = "/")}
+            className="bg-gray-800 hover:bg-gray-700 text-white"
+          >
             Return to Home
           </Button>
         </CardContent>
