@@ -7,11 +7,31 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Passport Photo Collage Generator | Print-Ready Official Document Photos",
+  title: "Passport Photo Collage Generator | Official Print-Ready Photos for USA, UK, Canada & More",
   description:
-    "Generate print-ready passport and visa photo collages instantly. Upload your photo, select country-specific requirements, and download high-quality collages for printing. Support for USA, UK, Canada, Australia, Schengen, and more.",
-  keywords:
-    "passport photo, visa photo, photo collage, print photos, document photos, photo generator, online photo tool, official photos, passport photo maker, visa photo generator, print ready passport photos, instant passport photo, passport photo online",
+    "Create professional passport and visa photo collages online. Instant generation for 11+ countries including USA, UK, Canada, Australia, Germany, Japan, China, France, Brazil, India, Schengen. High-quality, print-ready, secure. Only £1 / $1.30.",
+  keywords: [
+    "passport photo maker",
+    "visa photo generator",
+    "passport photo collage",
+    "print passport photos online",
+    "USA passport photo",
+    "UK passport photo",
+    "Canada passport photo",
+    "Australia passport photo",
+    "Schengen visa photo",
+    "official document photos",
+    "passport photo printing",
+    "visa photo requirements",
+    "2x2 passport photo",
+    "35x45mm photo",
+    "passport size photo",
+    "online passport photo tool",
+    "instant passport photos",
+    "cheap passport photos",
+    "print ready passport photos",
+    "300 dpi passport photo",
+  ].join(", "),
   authors: [{ name: "Collage4prints" }],
   creator: "Collage4prints",
   publisher: "Collage4prints",
@@ -20,9 +40,9 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "Passport Photo Collage Generator | Print-Ready Official Document Photos",
+    title: "Passport Photo Collage Generator | Official Print-Ready Photos",
     description:
-      "Generate print-ready passport and visa photo collages instantly. Upload your photo, select country-specific requirements, and download high-quality collages for printing.",
+      "Create professional passport and visa photo collages for 11+ countries. Instant, secure, print-ready. Only £1 / $1.30.",
     url: "/",
     siteName: "Collage4prints",
     images: [
@@ -30,7 +50,7 @@ export const metadata: Metadata = {
         url: "/images/how-it-works.png",
         width: 612,
         height: 200,
-        alt: "How to generate passport photo collages - Upload, Select, Print",
+        alt: "Generate passport photo collages - Upload, Select Country, Print",
       },
     ],
     locale: "en_US",
@@ -38,9 +58,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Passport Photo Collage Generator | Print-Ready Official Document Photos",
+    title: "Passport Photo Collage Generator | Official Print-Ready Photos",
     description:
-      "Generate print-ready passport and visa photo collages instantly. Support for 11+ countries including USA, UK, Canada, Australia.",
+      "Create professional passport and visa photo collages for 11+ countries. Instant, secure, print-ready. Only £1 / $1.30.",
     images: ["/images/how-it-works.png"],
   },
   robots: {

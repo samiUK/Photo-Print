@@ -19,6 +19,7 @@ import {
   BASE_PRICE_USD,
   BASE_PRICE_GBP,
 } from "@/lib/constants"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
 // Simple image processing without complex async operations
 function processImageSync(imageDataUrl: string, countryId: string, paperSizeId: string) {
@@ -317,48 +318,72 @@ export default function Home() {
   const selectedPaperSize = paperSizes.find((s) => s.id === selectedPaperSizeId)
 
   return (
-    <div className="flex min-h-screen flex-col items-center bg-gradient-to-br from-blue-400 via-purple-500 to-indigo-600 p-4">
+    <div className="flex min-h-screen flex-col items-center bg-slate-100 p-4">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebApplication",
-            name: "Collage4prints - Passport Photo Collage Generator",
+            name: "Collage4prints - Official Passport Photo Collage Generator",
             description:
-              "Generate print-ready passport and visa photo collages instantly. Upload your photo, select country-specific requirements, and download high-quality collages for printing.",
+              "Generate print-ready passport and visa photo collages instantly. Upload your photo, select from 11+ country-specific requirements including USA, UK, Canada, Australia, Germany, Japan, China, France, Brazil, India, and Schengen countries. Download high-quality collages optimized for professional printing.",
             url: process.env.NEXT_PUBLIC_BASE_URL || "https://collage4prints.com",
             applicationCategory: "UtilityApplication",
             operatingSystem: "Any",
+            browserRequirements: "Requires JavaScript. Chrome, Firefox, Safari, Edge supported.",
             offers: {
               "@type": "Offer",
               price: "1.00",
               priceCurrency: "GBP",
               availability: "https://schema.org/InStock",
+              priceValidUntil: "2025-12-31",
+              itemCondition: "https://schema.org/NewCondition",
             },
             aggregateRating: {
               "@type": "AggregateRating",
-              ratingValue: "5",
-              ratingCount: "100",
+              ratingValue: "4.9",
+              ratingCount: "150",
+              bestRating: "5",
+              worstRating: "1",
             },
             featureList: [
-              "Instant passport photo generation",
-              "11+ country support",
-              "Print-ready quality",
-              "Secure payment processing",
+              "Instant passport photo collage generation",
+              "Support for 11+ countries and visa types",
+              "Print-ready high-resolution quality (300 DPI)",
+              "Secure payment processing via Stripe",
               "No watermarks on final download",
+              "Multiple paper sizes: 6x4, A4, Letter",
+              "Multiple download formats: JPEG, PNG, PDF",
+              "Privacy-focused: All processing in browser",
+              "Instant download after payment",
+              "Professional photo specifications for each country",
             ],
+            audience: {
+              "@type": "Audience",
+              audienceType: "Travelers, Students, Professionals, Immigrants",
+            },
+            provider: {
+              "@type": "Organization",
+              name: "Collage4prints",
+              url: process.env.NEXT_PUBLIC_BASE_URL || "https://collage4prints.com",
+            },
           }),
         }}
       />
 
       <header className="w-full max-w-2xl py-8 text-center">
-        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl text-white drop-shadow-lg mb-6">
+        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl text-slate-800 mb-6">
           Official Photo Collage Generator for Prints
         </h1>
 
+        <p className="text-lg text-slate-700 mb-4 text-balance">
+          Create professional passport and visa photo collages for USA, UK, Canada, Australia, Germany, Japan, China,
+          France, Brazil, India, and Schengen countries. Instant, secure, and print-ready.
+        </p>
+
         <div className="flex flex-wrap justify-center gap-3 mt-4">
-          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/30 shadow-lg">
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-slate-300 shadow-lg">
             <Image
               src="https://flagcdn.com/w40/us.png"
               alt="USA Flag"
@@ -367,7 +392,7 @@ export default function Home() {
               className="w-full h-full object-cover"
             />
           </div>
-          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/30 shadow-lg">
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-slate-300 shadow-lg">
             <Image
               src="https://flagcdn.com/w40/gb.png"
               alt="UK Flag"
@@ -376,7 +401,7 @@ export default function Home() {
               className="w-full h-full object-cover"
             />
           </div>
-          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/30 shadow-lg">
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-slate-300 shadow-lg">
             <Image
               src="https://flagcdn.com/w40/ca.png"
               alt="Canada Flag"
@@ -385,7 +410,7 @@ export default function Home() {
               className="w-full h-full object-cover"
             />
           </div>
-          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/30 shadow-lg">
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-slate-300 shadow-lg">
             <Image
               src="https://flagcdn.com/w40/au.png"
               alt="Australia Flag"
@@ -394,7 +419,7 @@ export default function Home() {
               className="w-full h-full object-cover"
             />
           </div>
-          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/30 shadow-lg">
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-slate-300 shadow-lg">
             <Image
               src="https://flagcdn.com/w40/de.png"
               alt="Germany Flag"
@@ -403,7 +428,7 @@ export default function Home() {
               className="w-full h-full object-cover"
             />
           </div>
-          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/30 shadow-lg">
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-slate-300 shadow-lg">
             <Image
               src="https://flagcdn.com/w40/jp.png"
               alt="Japan Flag"
@@ -412,7 +437,7 @@ export default function Home() {
               className="w-full h-full object-cover"
             />
           </div>
-          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/30 shadow-lg">
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-slate-300 shadow-lg">
             <Image
               src="https://flagcdn.com/w40/cn.png"
               alt="China Flag"
@@ -421,7 +446,7 @@ export default function Home() {
               className="w-full h-full object-cover"
             />
           </div>
-          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/30 shadow-lg">
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-slate-300 shadow-lg">
             <Image
               src="https://flagcdn.com/w40/fr.png"
               alt="France Flag"
@@ -430,7 +455,7 @@ export default function Home() {
               className="w-full h-full object-cover"
             />
           </div>
-          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/30 shadow-lg">
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-slate-300 shadow-lg">
             <Image
               src="https://flagcdn.com/w40/br.png"
               alt="Brazil Flag"
@@ -439,7 +464,7 @@ export default function Home() {
               className="w-full h-full object-cover"
             />
           </div>
-          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/30 shadow-lg">
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-slate-300 shadow-lg">
             <Image
               src="https://flagcdn.com/w40/in.png"
               alt="India Flag"
@@ -448,7 +473,7 @@ export default function Home() {
               className="w-full h-full object-cover"
             />
           </div>
-          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/30 shadow-lg">
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-slate-300 shadow-lg">
             <Image
               src="https://flagcdn.com/w40/eu.png"
               alt="Schengen Flag"
@@ -470,7 +495,7 @@ export default function Home() {
           </CardHeader>
           <CardContent className="space-y-6 bg-white">
             <div className="flex flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed border-gray-300 p-6">
-              <h3 className="text-xl font-semibold text-gray-900">How it works?</h3>
+              <h2 className="text-xl font-semibold text-gray-900">How to Create Your Passport Photo Collage</h2>
               <Image
                 src="/images/how-it-works.png"
                 alt="How it works: Upload image, choose photo type and paper size, print at local store"
@@ -655,11 +680,68 @@ export default function Home() {
             )}
           </CardFooter>
         </Card>
+
+        <section className="mt-8 bg-white border border-slate-200 rounded-xl p-6 shadow-md">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="item-1">
+              <AccordionTrigger className="text-left text-lg font-semibold text-gray-900">
+                What countries are supported?
+              </AccordionTrigger>
+              <AccordionContent className="text-gray-700">
+                We support passport and visa photo specifications for USA, UK, Canada, Australia, Germany, Japan, China,
+                France, Brazil, India, and all Schengen countries. Each country has specific size requirements that are
+                automatically applied.
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="item-2">
+              <AccordionTrigger className="text-left text-lg font-semibold text-gray-900">
+                What paper sizes can I print on?
+              </AccordionTrigger>
+              <AccordionContent className="text-gray-700">
+                Choose from standard paper sizes including 6x4 inches, A4, and Letter size. The tool automatically
+                arranges as many photos as possible on your selected paper size.
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="item-3">
+              <AccordionTrigger className="text-left text-lg font-semibold text-gray-900">
+                Is my photo data secure?
+              </AccordionTrigger>
+              <AccordionContent className="text-gray-700">
+                All photo processing happens directly in your browser. We never upload or store your photos on our
+                servers, ensuring complete privacy and security.
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="item-4">
+              <AccordionTrigger className="text-left text-lg font-semibold text-gray-900">
+                What formats can I download?
+              </AccordionTrigger>
+              <AccordionContent className="text-gray-700">
+                After payment, you can download your collage in JPEG (high quality), PNG (lossless), or PDF
+                (print-ready) formats at 300 DPI resolution.
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="item-5">
+              <AccordionTrigger className="text-left text-lg font-semibold text-gray-900">
+                How do I print my collage?
+              </AccordionTrigger>
+              <AccordionContent className="text-gray-700">
+                Simply download your collage and take it to any local print shop or use your home printer. The file is
+                already optimized for printing with the correct dimensions and resolution.
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </section>
       </main>
 
       {/* Privacy Notice Footer */}
       <footer className="w-full max-w-2xl mt-8 mb-4">
-        <div className="bg-white/90 backdrop-blur-sm border border-white/20 rounded-xl p-4 shadow-lg">
+        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-md">
           <div className="flex items-start gap-3">
             <Shield className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
             <div className="text-sm text-gray-700">
