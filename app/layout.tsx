@@ -7,23 +7,30 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Photo-Print-Generator - Your Go-To Tool for Official Document Photos",
+  title: "Passport Photo Collage Generator | Print-Ready Official Document Photos",
   description:
-    "Generate print-ready passport and visa photo collages based on country-specific requirements. Upload your photo, select the type, and get a high-quality collage for printing.",
+    "Generate print-ready passport and visa photo collages instantly. Upload your photo, select country-specific requirements, and download high-quality collages for printing. Support for USA, UK, Canada, Australia, Schengen, and more.",
   keywords:
-    "passport photo, visa photo, photo collage, print photos, document photos, photo generator, online photo tool, official photos",
+    "passport photo, visa photo, photo collage, print photos, document photos, photo generator, online photo tool, official photos, passport photo maker, visa photo generator, print ready passport photos, instant passport photo, passport photo online",
+  authors: [{ name: "Collage4prints" }],
+  creator: "Collage4prints",
+  publisher: "Collage4prints",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://collage4prints.com"),
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "Photo-Print-Generator - Your Go-To Tool for Official Document Photos",
+    title: "Passport Photo Collage Generator | Print-Ready Official Document Photos",
     description:
-      "Generate print-ready passport and visa photo collages based on country-specific requirements. Upload your photo, select the type, and get a high-quality collage for printing.",
-    url: "https://your-app-url.com",
-    siteName: "Photo-Print-Generator",
+      "Generate print-ready passport and visa photo collages instantly. Upload your photo, select country-specific requirements, and download high-quality collages for printing.",
+    url: "/",
+    siteName: "Collage4prints",
     images: [
       {
         url: "/images/how-it-works.png",
-        width: 600,
+        width: 612,
         height: 200,
-        alt: "Photo-Print-Generator How it Works",
+        alt: "How to generate passport photo collages - Upload, Select, Print",
       },
     ],
     locale: "en_US",
@@ -31,9 +38,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Photo-Print-Generator - Your Go-To Tool for Official Document Photos",
+    title: "Passport Photo Collage Generator | Print-Ready Official Document Photos",
     description:
-      "Generate print-ready passport and visa photo collages based on country-specific requirements. Upload your photo, select the type, and get a high-quality collage for printing.",
+      "Generate print-ready passport and visa photo collages instantly. Support for 11+ countries including USA, UK, Canada, Australia.",
     images: ["/images/how-it-works.png"],
   },
   robots: {
@@ -47,7 +54,13 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  generator: "v0.dev",
+  category: "technology",
+  verification: {
+    // Add your verification codes when ready
+    // google: "your-google-verification-code",
+    // bing: "your-bing-verification-code",
+  },
+    generator: 'v0.app'
 }
 
 export default function RootLayout({

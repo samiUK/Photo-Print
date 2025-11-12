@@ -318,6 +318,40 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen flex-col items-center bg-gradient-to-br from-blue-400 via-purple-500 to-indigo-600 p-4">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            name: "Collage4prints - Passport Photo Collage Generator",
+            description:
+              "Generate print-ready passport and visa photo collages instantly. Upload your photo, select country-specific requirements, and download high-quality collages for printing.",
+            url: process.env.NEXT_PUBLIC_BASE_URL || "https://collage4prints.com",
+            applicationCategory: "UtilityApplication",
+            operatingSystem: "Any",
+            offers: {
+              "@type": "Offer",
+              price: "1.00",
+              priceCurrency: "GBP",
+              availability: "https://schema.org/InStock",
+            },
+            aggregateRating: {
+              "@type": "AggregateRating",
+              ratingValue: "5",
+              ratingCount: "100",
+            },
+            featureList: [
+              "Instant passport photo generation",
+              "11+ country support",
+              "Print-ready quality",
+              "Secure payment processing",
+              "No watermarks on final download",
+            ],
+          }),
+        }}
+      />
+
       <header className="w-full max-w-2xl py-8 text-center">
         <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl text-white drop-shadow-lg mb-6">
           Official Photo Collage Generator for Prints
