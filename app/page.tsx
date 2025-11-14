@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { Loader2, CreditCard, Shield } from "lucide-react"
+import { Loader2, CreditCard, Shield } from 'lucide-react'
 import {
   countryRequirements,
   paperSizes,
@@ -325,9 +325,9 @@ export default function Home() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebApplication",
-            name: "Collage4prints - Official Passport Photo Collage Generator",
+            name: "Passport Photo Collage Generator",
             description:
-              "Generate print-ready passport and visa photo collages instantly. Upload your photo, select from 11+ country-specific requirements including USA, UK, Canada, Australia, Germany, Japan, China, France, Brazil, India, and Schengen countries. Download high-quality collages optimized for professional printing.",
+              "Professional passport photo collage generator for printing. Create print-ready photo collages for USA, UK, Canada, Australia, Germany, Japan, China, France, Brazil, India, and Schengen countries. Best online photo collage generator for passport photos.",
             url: process.env.NEXT_PUBLIC_BASE_URL || "https://collage4prints.com",
             applicationCategory: "UtilityApplication",
             operatingSystem: "Any",
@@ -348,16 +348,19 @@ export default function Home() {
               worstRating: "1",
             },
             featureList: [
-              "Instant passport photo collage generation",
+              "Passport photo collage generator",
+              "Instant passport photo print collages",
+              "Photo collage generator for printing",
+              "Print-ready passport photo collages",
               "Support for 11+ countries and visa types",
-              "Print-ready high-resolution quality (300 DPI)",
+              "High-resolution quality (300 DPI) for photo printing",
               "Secure payment processing via Stripe",
               "No watermarks on final download",
               "Multiple paper sizes: 6x4, A4, Letter",
               "Multiple download formats: JPEG, PNG, PDF",
               "Privacy-focused: All processing in browser",
               "Instant download after payment",
-              "Professional photo specifications for each country",
+              "Professional passport photo specifications for each country",
             ],
             audience: {
               "@type": "Audience",
@@ -365,7 +368,7 @@ export default function Home() {
             },
             provider: {
               "@type": "Organization",
-              name: "Collage4prints",
+              name: "Collage4prints - Passport Photo Collage Generator",
               url: process.env.NEXT_PUBLIC_BASE_URL || "https://collage4prints.com",
             },
           }),
@@ -374,12 +377,13 @@ export default function Home() {
 
       <header className="w-full max-w-2xl py-8 text-center">
         <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl text-slate-800 mb-6">
-          Official Photo Collage Generator for Prints
+          Passport Photo Collage Generator
         </h1>
 
         <p className="text-lg text-slate-700 mb-4 text-balance">
-          Create professional passport and visa photo collages for USA, UK, Canada, Australia, Germany, Japan, China,
-          France, Brazil, India, and Schengen countries. Instant, secure, and print-ready.
+          Create professional passport photo collages for printing. Photo collage generator for USA, UK, Canada,
+          Australia, Germany, Japan, China, France, Brazil, India, and Schengen countries. Generate print-ready
+          passport photo prints instantly.
         </p>
 
         <div className="flex flex-wrap justify-center gap-3 mt-4">
@@ -488,17 +492,21 @@ export default function Home() {
       <main className="w-full max-w-2xl">
         <Card className="w-full shadow-2xl border-0 rounded-2xl overflow-hidden">
           <CardHeader className="bg-white">
-            <CardTitle className="text-3xl font-bold text-gray-900">Passport Photo Collage Generator</CardTitle>
+            <CardTitle className="text-3xl font-bold text-gray-900">
+              Passport Photo Collage Generator
+            </CardTitle>
             <CardDescription className="text-gray-700 text-base">
-              Upload your photo, select country requirements, and get a print-ready collage.
+              Upload your photo, select country requirements, and generate a print-ready passport photo collage.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6 bg-white">
             <div className="flex flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed border-gray-300 p-6">
-              <h2 className="text-xl font-semibold text-gray-900">How to Create Your Passport Photo Collage</h2>
+              <h2 className="text-xl font-semibold text-gray-900">
+                How to Create Your Passport Photo Collage for Printing
+              </h2>
               <Image
                 src="/images/how-it-works.png"
-                alt="How it works: Upload image, choose photo type and paper size, print at local store"
+                alt="Passport photo collage generator: Upload photo, generate collage, print passport photos"
                 width={612}
                 height={200}
                 className="max-w-full h-auto object-contain"
@@ -606,7 +614,9 @@ export default function Home() {
 
             {result?.success && result.watermarkedImage && (
               <div className="mt-6 space-y-4">
-                <h3 className="text-xl font-semibold text-center text-gray-900">Print-Ready Collage Preview</h3>
+                <h3 className="text-xl font-semibold text-center text-gray-900">
+                  Print-Ready Passport Photo Collage Preview
+                </h3>
                 <div className="flex justify-center">
                   <Image
                     src={result.watermarkedImage || "/placeholder.svg"}
@@ -618,7 +628,8 @@ export default function Home() {
                   />
                 </div>
                 <div className="text-center text-sm text-gray-800">
-                  Collage generated with {selectedCountry?.name || ""} photos on {selectedPaperSize?.name || ""} paper.
+                  Passport photo collage generated with {selectedCountry?.name || ""} photos on{" "}
+                  {selectedPaperSize?.name || ""} paper.
                   <br />
                   **Total Photos on Sheet: {result.totalPhotos}**
                 </div>
@@ -629,10 +640,12 @@ export default function Home() {
             {result?.success && result.nonWatermarkedImage && (
               <>
                 <div className="w-full text-center">
-                  <div className="text-2xl font-bold text-gray-900 mb-2">Get High-Quality Download</div>
+                  <div className="text-2xl font-bold text-gray-900 mb-2">
+                    Download Your Print-Ready Photo Collage
+                  </div>
                   <div className="text-lg text-gray-700 mb-4">
                     Only {currency === "GBP" ? "£" : "$"}
-                    {price.toFixed(2)} {currency} for print-ready quality
+                    {price.toFixed(2)} {currency} for high-quality passport photo print
                   </div>
                 </div>
 
@@ -682,57 +695,73 @@ export default function Home() {
         </Card>
 
         <section className="mt-8 bg-white border border-slate-200 rounded-xl p-6 shadow-md">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Passport Photo Collage Generator - Frequently Asked Questions
+          </h2>
 
           <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="item-1">
+            <AccordionItem value="item-0">
               <AccordionTrigger className="text-left text-lg font-semibold text-gray-900">
-                What countries are supported?
+                Is this passport photo collage generator really free to use?
               </AccordionTrigger>
               <AccordionContent className="text-gray-700">
-                We support passport and visa photo specifications for USA, UK, Canada, Australia, Germany, Japan, China,
-                France, Brazil, India, and all Schengen countries. Each country has specific size requirements that are
-                automatically applied.
+                Yes! Our photo collage generator is completely free to use. You can upload your photo, generate
+                print-ready passport photo collages, and preview them at no cost. You only pay £1 / $1.30 when you want
+                to download the high-resolution, watermark-free version for printing.
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="item-1">
+              <AccordionTrigger className="text-left text-lg font-semibold text-gray-900">
+                What countries are supported for passport photo prints?
+              </AccordionTrigger>
+              <AccordionContent className="text-gray-700">
+                Our passport photo collage generator supports USA, UK, Canada, Australia, Germany, Japan, China, France,
+                Brazil, India, and all Schengen countries. Each country has specific passport photo print requirements
+                that are automatically applied to your photo collage.
               </AccordionContent>
             </AccordionItem>
 
             <AccordionItem value="item-2">
               <AccordionTrigger className="text-left text-lg font-semibold text-gray-900">
-                What paper sizes can I print on?
+                What paper sizes can I use for printing my passport photo collage?
               </AccordionTrigger>
               <AccordionContent className="text-gray-700">
-                Choose from standard paper sizes including 6x4 inches, A4, and Letter size. The tool automatically
-                arranges as many photos as possible on your selected paper size.
+                Our photo collage generator supports standard paper sizes including 6x4 inches, A4, and Letter size. The
+                tool automatically arranges as many passport photos as possible on your selected paper size for efficient
+                printing.
               </AccordionContent>
             </AccordionItem>
 
             <AccordionItem value="item-3">
               <AccordionTrigger className="text-left text-lg font-semibold text-gray-900">
-                Is my photo data secure?
+                Is my photo data secure when using this photo collage generator?
               </AccordionTrigger>
               <AccordionContent className="text-gray-700">
-                All photo processing happens directly in your browser. We never upload or store your photos on our
-                servers, ensuring complete privacy and security.
+                All photo processing happens directly in your browser. We never upload or store your photos
+                on our servers, ensuring complete privacy and security when you create your passport photo collage for
+                printing.
               </AccordionContent>
             </AccordionItem>
 
             <AccordionItem value="item-4">
               <AccordionTrigger className="text-left text-lg font-semibold text-gray-900">
-                What formats can I download?
+                What formats can I download from the passport photo print generator?
               </AccordionTrigger>
               <AccordionContent className="text-gray-700">
-                After payment, you can download your collage in JPEG (high quality), PNG (lossless), or PDF
-                (print-ready) formats at 300 DPI resolution.
+                After payment, you can download your passport photo collage in JPEG (high quality), PNG (lossless), or
+                PDF (print-ready) formats at 300 DPI resolution - perfect for professional passport photo printing.
               </AccordionContent>
             </AccordionItem>
 
             <AccordionItem value="item-5">
               <AccordionTrigger className="text-left text-lg font-semibold text-gray-900">
-                How do I print my collage?
+                How do I print my passport photo collage?
               </AccordionTrigger>
               <AccordionContent className="text-gray-700">
-                Simply download your collage and take it to any local print shop or use your home printer. The file is
-                already optimized for printing with the correct dimensions and resolution.
+                Simply download your print-ready photo collage and take it to any local print shop or use your home
+                printer. The file is already optimized for printing with the correct dimensions and resolution for perfect
+                passport photo prints every time.
               </AccordionContent>
             </AccordionItem>
           </Accordion>
